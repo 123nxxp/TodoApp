@@ -8,6 +8,7 @@ app.use(bodyParser.urlencoded({extended : true}))
 app.use(express.static("public"))
 
 let items = ["Buy Food", "Eat Food", "Cook Food"] ; 
+let workitems = [] ;
 
 app.get("/", function(req, res){
 
@@ -24,16 +25,38 @@ app.get("/", function(req, res){
 
     var day = today.toLocaleDateString("en-US", options) ;
 
-    res.render("list", {kindOfDay : day, newListItems : items});
+    res.render("list", {listTitle : day, newListItems : items});
 })
 
+
+
 app.post("/", function(req, res){
-    item = req.body.newItem ;
-    items.push(item) ;
+    console.log(req.body);
+    let item = req.body.newItem ;
+
+    if(req.body.list === "Work"){
+        workitems.push(item);
+        res.redirect("/work");
+    }else{
+        items.push(item) ;
+        res.redirect("/");
+    }
+    
     // console.log(item) ;
     // res.render("list", {newListItem : item} ); //will not work bcz it will render kindofday and newlistitem is not their
-    res.redirect("/");
+    
 })
+
+app.get("/work", function(req, res){
+    res.render("list", {listTitle : "Work List", newListItems : workitems} );
+})
+
+
+// app.post("/work", function(req, res){
+//     let item = req.body.newItem ;
+//     workitems.push(item);
+//     res.redirect("/work");
+// })
 
 app.listen(3000, function(){
     console.log("server is running at 3000");
